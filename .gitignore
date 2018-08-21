@@ -1,0 +1,11 @@
+# Intellij
+/.idea
+*.iml
+
+# Composer
+/vendor/
+composer.lock
+*.phar
+
+# Cache files
+*.cache

@@ -1,0 +1,27 @@
+{
+    "name": "utarwyn/phpdoc-gen",
+    "description": "Light and easy tool to generate a PHP documentation.",
+    "keywords": ["documentation", "phpdoc", "api", "php"],
+    "version": "0.1.0",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Utarwyn",
+            "email": "maxime.malgorn@laposte.net"
+        }
+    ],
+    "support": {
+        "source": "https://github.com/utarwyn/phpdoc-gen",
+        "issues": "https://github.com/utarwyn/phpdoc-gen/issues"
+    },
+    "autoload": {
+        "psr-4": {
+            "Utarwyn\\": "src/Utarwyn"
+        }
+    },
+    "require": {
+        "php": ">=7.1",
+        "symfony/yaml": "^4.1"
+    }
+}
