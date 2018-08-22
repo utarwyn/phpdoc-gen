@@ -13,7 +13,7 @@ class Node
 
     private $metadatas;
 
-    public function __construct(string $type)
+    public function __construct(int $type)
     {
         $this->type = $type;
         $this->metadatas = array();

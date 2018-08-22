@@ -17,7 +17,7 @@ class FileWrapper
         $this->descriptors = array();
     }
 
-    public function analyse()
+    public function analyze()
     {
         $tokens = token_get_all(file_get_contents($this->file), TOKEN_PARSE);
         $builder = new NodeBuilder();
@@ -26,19 +26,26 @@ class FileWrapper
             if (is_array($token)) {
                 $id = $token[0];
                 $content = $token[1];
-                $line = $token[2];
-
-                echo(token_name($id) . ' at line ' . $line . PHP_EOL);
 
                 switch ($id) {
-                    case \T_FINAL:
-                        $builder->setNextIsFinal();
-                        break;
-                    case \T_STATIC:
-                        $builder->setNextIsStatic();
-                        break;
                     case \T_FUNCTION:
-                        $builder->createNode('function');
+                    case \T_CLASS:
+                    case \T_INTERFACE:
+                        $builder->createNode($id);
+                        break;
+                    case \T_VARIABLE:
+                        // TODO Only get variables inside a class!
+                        if (is_null($builder->getNode())) {
+                            $builder->createNode($id);
+                            $builder->getNode()->setName(ltrim($content, '$'));
+                        }
+                        break;
+                    case \T_PUBLIC:
+                    case \T_PRIVATE:
+                    case \T_PROTECTED:
+                    case \T_FINAL:
+                    case \T_STATIC:
+                        $builder->addMetadataForNextNode($id);
                         break;
                     case \T_DOC_COMMENT:
                         $builder->setNextDocBlock($content);
@@ -53,14 +60,13 @@ class FileWrapper
                         break;
                 }
             } else {
-                if ($token === "{") {
-                    var_dump($builder->getNode());
-                    $builder->nodeBuildEnd();
-                } else if ($token === "}") {
-
+                if ($token === "{" || $token === ";") {
+                    $builder->endBuildingCurrentNode();
                 }
             }
         }
+
+        var_dump($builder->getNodes());
     }
 
     private function createDescriptorFromNode($node) {

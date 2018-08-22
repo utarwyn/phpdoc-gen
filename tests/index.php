@@ -1,6 +1,13 @@
 <?php
 class MyAwesomeClass extends Exception {
 
+    private $myawesomefield;
+
+    /**
+     * @var bool My public awesome static field!
+     */
+    public static $publicstaticfield = true;
+
     public final function check2()
     {
 
@@ -8,11 +15,11 @@ class MyAwesomeClass extends Exception {
 
     public function __construct(string $message = "", int $code = 0, Throwable $previous = null)
     {
-        parent::__construct($message, $code, $previous);
+
     }
 
     /**
-     * @return bool Mon super booléen
+     * @return bool My awesome boolean value!
      */
     public static function check()
     {

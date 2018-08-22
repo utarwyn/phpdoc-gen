@@ -7,18 +7,23 @@ class NodeBuilder
 
     private $node;
 
-    private $nextIsStatic;
-
-    private $nextIsFinal;
+    private $nextMetadatas;
 
     private $nextDocBlock;
+
+    private $nodes;
 
     public function __construct()
     {
         $this->node = null;
-        $this->nextIsStatic = false;
-        $this->nextIsFinal = false;
+        $this->nextMetadatas = array();
         $this->nextDocBlock = null;
+        $this->nodes = array();
+    }
+
+    public function getNodes()
+    {
+        return $this->nodes;
     }
 
     public function getNode(): ?Node
@@ -33,28 +38,25 @@ class NodeBuilder
 
     public function createNode(string $type)
     {
+        if ($this->isBuildingElement()) {
+            $this->endBuildingCurrentNode();
+        }
+
         $this->node = new Node($type);
 
         // Apply previous stated fields
-        if ($this->nextIsFinal) {
-            $this->node->addMetadata('final');
+        foreach ($this->nextMetadatas as $metadata) {
+            $this->node->addMetadata($metadata);
         }
-        if ($this->nextIsStatic) {
-            $this->node->addMetadata('static');
-        }
+
         if (!is_null($this->nextDocBlock)) {
             $this->node->setDocumentation($this->nextDocBlock);
         }
     }
 
-    public function setNextIsStatic()
+    public function addMetadataForNextNode(int $metadata)
     {
-        $this->nextIsStatic = true;
-    }
-
-    public function setNextIsFinal()
-    {
-        $this->nextIsFinal = true;
+        array_push($this->nextMetadatas, $metadata);
     }
 
     public function setNextDocBlock(string $nextDocBlock)
@@ -62,12 +64,13 @@ class NodeBuilder
         $this->nextDocBlock = $nextDocBlock;
     }
 
-    public function nodeBuildEnd()
+    public function endBuildingCurrentNode()
     {
         if ($this->isBuildingElement()) {
+            array_push($this->nodes, $this->node);
+
             $this->node = null;
-            $this->nextIsStatic = false;
-            $this->nextIsFinal = false;
+            $this->nextMetadatas = array();
             $this->nextDocBlock = null;
         }
     }

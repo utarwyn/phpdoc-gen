@@ -22,7 +22,7 @@ class PhpDocReader
             $wrapper = new FileWrapper($file);
 
             $begin = microtime(true);
-            $wrapper->analyse();
+            $wrapper->analyze();
             echo(PHP_EOL . $file . ': ' . round((microtime(true) - $begin)*1000, 3) . 'ms' . PHP_EOL);
         }
     }
