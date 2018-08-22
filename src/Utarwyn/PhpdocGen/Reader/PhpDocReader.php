@@ -2,8 +2,6 @@
 
 namespace Utarwyn\PhpdocGen\Reader;
 
-use Utarwyn\PhpdocGen\Reader\Analyzer\FileAnalyzer;
-
 /**
  * Class PhpDocReader
  * @package Utarwyn\PhpdocGen\Reader
@@ -21,10 +19,10 @@ class PhpDocReader
         $this->tree = $this->readFiles($sourceFolder);
 
         foreach ($this->tree as $file) {
-            $analyzer = new FileAnalyzer($file);
+            $wrapper = new FileWrapper($file);
 
             $begin = microtime(true);
-            $analyzer->analyse();
+            $wrapper->analyse();
             echo(PHP_EOL . $file . ': ' . round((microtime(true) - $begin)*1000, 3) . 'ms' . PHP_EOL);
         }
     }
