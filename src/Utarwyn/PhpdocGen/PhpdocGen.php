@@ -13,7 +13,7 @@ class PhpdocGen
 
     public function __construct()
     {
-        $this->config = new Config();
+        $this->config = new Config('.phpdoc.yml');
         $this->reader = new PhpDocReader($this->config->source);
     }
 

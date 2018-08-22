@@ -2,6 +2,8 @@
 
 namespace Utarwyn\PhpdocGen\Reader;
 
+use Utarwyn\PhpdocGen\Reader\Analyzer\FileAnalyzer;
+
 /**
  * Class PhpDocReader
  * @package Utarwyn\PhpdocGen\Reader
@@ -16,15 +18,29 @@ class PhpDocReader
     public function __construct(string $sourceFolder)
     {
         $this->sourceFolder = $sourceFolder;
-        $this->tree = ReaderUtil::getRecursiveFiles($sourceFolder);
+        $this->tree = $this->readFiles($sourceFolder);
 
-        // TODO: a tiny test
-        try {
-            $class = new \ReflectionClass('Utarwyn\PhpdocGen\Reader\PhpDocReader');
-            var_dump($class->getDocComment());
-        } catch (\ReflectionException $e) {
-            var_dump($e->getMessage());
+        foreach ($this->tree as $file) {
+            $analyzer = new FileAnalyzer($file);
+
+            $begin = microtime(true);
+            $analyzer->analyse();
+            echo(PHP_EOL . $file . ': ' . round((microtime(true) - $begin)*1000, 3) . 'ms' . PHP_EOL);
         }
+    }
+
+    public function readFiles(string $directory)
+    {
+        $directory = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory));
+        $files = array();
+
+        foreach ($directory as $filename => $fileObject) {
+            if (substr($filename, -4) === '.php') {
+                array_push($files, $filename);
+            }
+        }
+
+        return $files;
     }
 
 }
